@@ -74,7 +74,7 @@ def bfs(start_x, start_y, target_x, target_y):
             hy = history_y[x][y]
 
             if (hx,hy) == (start_x, start_y) :
-                return [target_x, target_y]
+                return (target_x, target_y)
 
             while (hx,hy) != (start_x,start_y) :
                 history.append((hx,hy))
@@ -91,10 +91,8 @@ def bfs(start_x, start_y, target_x, target_y):
             if visited[nx][ny] : continue #최단거리가 아니면
 
             #!!지나갈 수 없는 편의점이나 지나갈 수 없는 베이스캠프가 있다면 continue!!
-            if (nx,ny) in arrived_store :
-                continue
-            if (nx,ny) in arrived_basecamp :
-                continue
+            if (nx,ny) in arrived_store : continue
+            if (nx,ny) in arrived_basecamp : continue
 
 
             history_x[nx][ny] = x
@@ -172,6 +170,7 @@ while True :
         cx, cy = convenient_pos[i]
         if is_inrange(px,py): #격자에 사람이 있으면
             move_pos = bfs(px,py,cx,cy) #편의점을 향해 1칸 이동한다
+            #print(move_pos)
             mx,my = move_pos
             x_pos[i], y_pos[i] = mx,my
            
