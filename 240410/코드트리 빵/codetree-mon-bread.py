@@ -23,6 +23,8 @@ def move_to_basecamp(start_x, start_y):
             nx, ny = x + dx[i], y + dy[i]
             if not is_inrange(nx, ny): continue  # 좌표 밖으로 넘어가면
             if visited[nx][ny]: continue  # 최단거리가 아니면
+            #도달할 수 없는 베이스캠프일수도있다. 
+
 
             # !!지나갈 수 없는 편의점이나 지나갈 수 없는 베이스캠프가 있다면 continue!!
             if (nx, ny) in arrived_store:
@@ -33,13 +35,14 @@ def move_to_basecamp(start_x, start_y):
             depth[nx][ny] = d+1
             q.append((nx, ny,d+1))
             visited[nx][ny] = True
-
     min_depth = 300
     mx, my = (-1,-1)
     for i in range(n):
         for j in range(n): #행, 열이 작은 것이 우선 순위
 
             if arr[i][j] == 1 : #베이스캠프의 위치에 도달
+                if depth[i][j] == 0 : 
+                    continue # 도달할 수 없는 위치임 ㅜㅠ
                 if depth[i][j] < min_depth : #베이스캠프까지의 거리 중 더 작은 깊이라면
                     min_depth = depth[i][j] #갱신한다
                     mx, my = (i,j) #이동할 베이스캠프의 좌표도 갱신한다
@@ -63,9 +66,11 @@ def bfs(start_x, start_y, target_x, target_y):
     history_y[start_x][start_y] = start_y
     history = []
 
+
     while q :
         x,y = q.popleft()
         if (x,y) == (target_x, target_y): #편의점으로의 최단거리에 도달하였으면
+            
             #경로를 역추척해서 1칸 이동 했을 시의 좌표를 구한다
             hx = history_x[x][y]
             hy = history_y[x][y]
@@ -122,7 +127,7 @@ for i in range(n):
 
 
 #나중에 디버깅요소가 될거같은 쎄한느낌
-people_pos = [[-1,-1] for _ in range(m)] #처음에는 격자 밖에 나와있다
+people_pos = [(-1,-1) for _ in range(m)] #처음에는 격자 밖에 나와있다
 
 
 arrived = [False for _ in range(m)]
@@ -198,6 +203,6 @@ while True :
         mx,my = move_to_basecamp(bx,by) #mx,my 이동할 베이스캠프의 좌표
 
         #사람 위치 업데이트
-        people_pos[t - 1] = mx,my
+        people_pos[t - 1] = (mx,my)
         #해당 베이스캠프는 이동할 수 없다
         arrived_basecamp.append((mx,my))
