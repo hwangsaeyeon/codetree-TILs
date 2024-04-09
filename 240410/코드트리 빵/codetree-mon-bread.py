@@ -193,7 +193,8 @@ while True :
 
     if t <= m :
         #t-1 번 사람이 가까운 베이스캠프로 이동한다
-        bx, by = people_pos[t-1]  #bx,by 이동할 사람의 좌표
+        #bx, by = people_pos[t-1]  #bx,by 이동할 사람의 좌표
+        bx, by = convenient_pos[t-1]
         mx,my = move_to_basecamp(bx,by) #mx,my 이동할 베이스캠프의 좌표
 
         #사람 위치 업데이트
