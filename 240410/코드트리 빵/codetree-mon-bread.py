@@ -77,7 +77,7 @@ def bfs(start_x, start_y, target_x, target_y):
                 return [target_x, target_y]
 
             while (hx,hy) != (start_x,start_y) :
-                history.append([hx,hy])
+                history.append((hx,hy))
 
                 tempx = history_x[hx][hy]
                 tempy = history_y[hx][hy]
