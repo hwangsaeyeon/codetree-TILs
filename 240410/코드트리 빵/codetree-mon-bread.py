@@ -19,6 +19,7 @@ def move_to_basecamp(start_x, start_y):
 
     while q:
         x, y, d = q.popleft()
+
         for i in range(4):
             nx, ny = x + dx[i], y + dy[i]
             if not is_inrange(nx, ny): continue  # 좌표 밖으로 넘어가면
@@ -31,6 +32,7 @@ def move_to_basecamp(start_x, start_y):
                 continue
 
             depth[nx][ny] = d+1
+
             q.append((nx, ny,d+1))
             visited[nx][ny] = True
 
@@ -154,9 +156,11 @@ while True :
     if cnt == m :
         print(t)
         break
+    
+    t+=1 #이걸안해서 막히다니...
 
     #=============================================
-    t+=1 
+    
     #1분동안 순서대로 진행한다
 
     #1. 격자에 있는 사람이 있으면, 편의점을 향해 1칸 이동한다
@@ -187,6 +191,7 @@ while True :
         if (x_pos[i], y_pos[i]) == convenient_pos[i] :
             arrived_store.append((convenient_pos[i])) #해당 편의점으로 이동할 수 없다
             arrived[i] = True #앞으로 i번 사람은 이동하지 않아도 된다
+            
 
     #=============================================
 
@@ -195,8 +200,10 @@ while True :
     #=============================================
 
     if t <= m :
+        
         #t-1 번 사람이 가까운 베이스캠프로 이동한다
-        bx, by = x_pos[t-1],y_pos[t-1]  #bx,by 이동할 사람의 좌표
+        #bx, by = x_pos[t-1],y_pos[t-1]  #bx,by 이동할 사람의 좌표
+        bx, by = convenient_pos[t-1] #가고싶은 편의점 좌표
         mx,my = move_to_basecamp(bx,by) #mx,my 이동할 베이스캠프의 좌표
         
         #사람 위치 업데이트
