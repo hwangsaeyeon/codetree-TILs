@@ -1,7 +1,6 @@
 import sys
 from collections import deque
 
-sys.stdin = open("input.txt","r")
 
 def is_inrange(x,y):
     return 0<=x<n and 0<=y<n
