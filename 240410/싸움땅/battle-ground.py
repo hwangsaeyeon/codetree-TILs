@@ -4,6 +4,8 @@ from collections import deque
 
 def is_inrange(x,y):
     return 0<=x<n and 0<=y<n
+
+
 def step_one(x,y,d):
     #본인이 향하는 방향대로 한칸 이동한다
     #0,1,2,3 상,우,하,좌
@@ -24,25 +26,37 @@ def step_one(x,y,d):
     return nx,ny,nd #이동 위치, 이동 방향 리턴
 
 
-def gun_switch(x,y, idx):
-    if arr[x][y] != [0]: #해당 좌표에 총이 있음
-        max_gun_power = gun_power[idx]
-        original = gun_power[idx]  # 원래 있던 총 저장
-        for i in range(len(arr[x][y])) : #해당 좌표의 총 리스트를 순회한다
-            if max_gun_power < arr[x][y][i]: #가지고 있는 총의 공격력보다 배열에 있는 총의 공격력이 더 세다면
-                max_gun_power = arr[x][y][i]
 
-        if max_gun_power != gun_power[idx] :
-            gun_power[idx] = max_gun_power #총을 가진다
-            arr[x][y].remove(arr[x][y][i])
+
+
+
+
+def gun_switch(x,y,idx): 
+    if arr[x][y] != [0] : #현재 격자에 총이 있는 경우
+        original = gun_power[idx] #현재 가지고 있는 총의 공격력 
+
+        if original < max(arr[x][y]) : #놓인 총이 더크다면
+            #더 큰 것을 가진다 
+            gun_power[i] = max(arr[x][y])
+            arr[x][y].remove(max(arr[x][y])) #현재 격자에서 가진 총을 뺀다 
+
+
+            #원래 값이 0이 아니었더라면(가지고 있는 총이 없었음) 나머지는 해당 격자에 둔다 
+            if original != 0 : 
+                arr[x][y].append(original)
+
 
             if len(arr[x][y]) == 0: #총을 가져서 리스트가 []가 되는 경우
                 arr[x][y] = [0]
 
-            if original == 0 : #원래 있던 총이 없던 경우 pass
-                pass
-            else:
-                arr[x][y].append(original) #가지고 있는 총을 해당 격자에 버린다
+
+
+
+
+
+
+
+
 
 def fight(player_idx, other_player_idx, x,y,ox,oy):
     #플레이어 초기 능력치 + 총의 공격력 합 계산
@@ -70,45 +84,34 @@ def fight(player_idx, other_player_idx, x,y,ox,oy):
 
     #이긴 플레이어, 진 플레이어 인덱스 저장
     #이긴 플레이어는 포인트를 획득한다 : abs(초기능력치 + 총의 공격력의 차)
-
+    
     scores[winner_idx] += abs(player_val - other_player_val)
 
     return winner_idx, loser_idx #이긴 플레이어, 진 플레이어 인덱스 반환
 
-def find_other(idx, x, y): #자기 인덱스, 자기 x 좌표, 자기 y 좌표 :: 다른 사람이 있는지 찾는 함수
+
+
+
+
+
+def find_other(idx, x, y): #자기 인덱스, 자기 x 좌표, 자기 y 좌표 : 다른 사람이 있는지 찾는 함수
     for i in range(m):
         if i == idx :
             continue
         fx, fy, _, _, = player_info[i]
         if (fx, fy) == (x, y):  # 다른 플레이어가 있다면
-            return True
+            return True, i, fx, fy
 
-    return False
+    return False, None, None, None 
 
-def loser_move(loser):
-    lx, ly, ld, ls = player_info[loser]
-    dx, dy = [-1, 0, 1, 0], [0, 1, 0, -1]
-    x,y = lx + dx[ld], ly + dy[ld] #원래 방향으로 한 칸 이동한 좌표
 
-    # 격자 안, 사람 없으면
-    if is_inrange(x,y):
-        if not find_other(loser,x,y):
-            #그 칸으로 이동한다
-            player_info[loser] = x,y,ld,ls
-            return
 
-    # 격자 안에 없거나, 사람이 있음
-    for i in range(ld+1, ld+4):
-        nd = i%4
-        nx, ny = lx+dx[nd], ly+dy[nd]
-        if not is_inrange(nx,ny):
-            continue
-        if find_other(loser,nx,ny):
-            continue
 
-        #그 칸으로 이동한다
-        player_info[loser] = nx,ny,nd,ls
-        return
+
+
+    
+    
+
 
 
 
@@ -116,30 +119,62 @@ def loser_move(loser):
 def step_two(player_idx, other_player_idx, x,y,ox,oy):
     # 싸움 : 스코어 계산
     winner, loser = fight(player_idx, other_player_idx, x,y,ox,oy)
-    wx,wy,wd,ws= player_info[winner]
+    wx, wy, wd, ws = player_info[winner]
     lx, ly, ld, ls = player_info[loser]
 
     # 진 플레이어 :
     #총을 내려놓는다
-    if gun_power[loser] == 0 :
+    if gun_power[loser] == 0 : #총을 갖고 있지 않음 
         pass
     else:
-        arr[lx][ld].append(gun_power[loser])
+        if arr[lx][ly] == [0] : 
+            arr[lx][ly] = [gun_power[loser]]
+        else: 
+            arr[lx][ly].append(gun_power[loser])
+    
 
     gun_power[loser] = 0
 
     #진 플레이어는 이동한다
-    loser_move(loser)
-    lx,ly,ld,ls = player_info[loser]
+    dx, dy = [-1, 0, 1, 0], [0, 1, 0, -1]
+    x,y = lx + dx[ld], ly + dy[ld] #원래 방향으로 한 칸 이동한 좌표
+
+    # 격자 안, 사람 없으면
+    if is_inrange(x,y):
+        check, _, _, _ = find_other(loser,x,y)
+        if not check:
+            #그 칸으로 이동한다
+            player_info[loser] = x,y,ld,ls
+
+    else : 
+   
+
+        # 격자 안에 없거나, 사람이 있음
+        # 오른쪽으로 90도씩 회전하여 빈 칸이 보이는 순간 이동 
+        for i in range(ld+1, ld+4):
+            nd = i%4
+            nx, ny = lx+dx[nd], ly+dy[nd]
+            if not is_inrange(nx,ny):
+                continue
+            check, _, _, _ = find_other(loser,x,y)
+            if check :
+                continue
+
+            #그 칸으로 이동한다
+            player_info[loser] = nx,ny,nd,ls
+
+
+
+    new_x, new_y, new_d,ls = player_info[loser]
 
     #이동한 칸에 총이 있다면 gun switch
-    gun_switch(lx,ly,loser)
+    gun_switch(new_x, new_y,loser)
 
+    
     #====================
-
     # 이긴 플레이어 :
     #현재 칸에서 gun switch
-    gun_switch(wx,wy,winner)
+    gun_switch(wx, wy, winner)
 
 
 
@@ -154,8 +189,6 @@ for i in range(n):
     for j in range(n):
         arr[i][j] = [line[j]]
 
-ability = [] #능력치 리스트
-
 gun_power = [[] for _ in range(m)] #가지고 있는 총의 공격력 비교 배열
 player_info = [[] for _ in range(m)] #플레이어 정보 리스트
 
@@ -166,10 +199,25 @@ for i in range(m):
     gun_power[i] = 0
 
 scores = [0 for _ in range(m)] #포인트 리스트
-for t in range(k): #k 라운드 동안 게임 순차적 진행
 
+
+
+
+
+
+
+
+
+for t in range(k): #k 라운드 동안 게임 순차적 진행
     for i in range(m): #각 플레이어가 순서대로 진행
         x,y,d,s = player_info[i]
+
+        #초기 위치에 사람이 있다면 싸운다 
+        #check, other, other_x, other_y = find_other(i,x,y)
+        #if check: 
+        #    step_two(i, j, x, y, other_x, other_y)
+
+
         #첫번째 스텝 : 본인이 향하는 방향대로 한 칸 이동한다(무조건 이동)
         #=====================================
 
@@ -180,6 +228,7 @@ for t in range(k): #k 라운드 동안 게임 순차적 진행
 
 
         #두번째 스텝 :
+        #=====================================
         meet = False
         for j in range(m):
             if i == j : # 본인일 경우 pass
@@ -191,13 +240,18 @@ for t in range(k): #k 라운드 동안 게임 순차적 진행
                 ## (fight)
                 step_two(i,j,nx,ny,other_x,other_y)
                 meet = True
-                break
+                
+
+                break #for문 탈출 
 
 
         #2-1 이동한 방향에 플레이어가 없다면
         if not meet :
             #이동한 방향에 플레이어가 없는 경우 (총 switch)
             gun_switch(nx,ny, i)
+        
+        
+        #=====================================
 
 
 
