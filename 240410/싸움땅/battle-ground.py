@@ -4,6 +4,8 @@ from collections import deque
 
 def is_inrange(x,y):
     return 0<=x<n and 0<=y<n
+
+
 def step_one(x,y,d):
     #본인이 향하는 방향대로 한칸 이동한다
     #0,1,2,3 상,우,하,좌
