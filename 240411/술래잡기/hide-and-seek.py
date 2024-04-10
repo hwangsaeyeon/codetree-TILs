@@ -29,6 +29,9 @@ def hider_move(seeker_pos, hider):
             if (nx, ny) != seeker_pos :
                 hider_pos[hider] = nx, ny, new_dir
 
+            else :
+                hider_pos[hider] = hider_x, hider_y, new_dir
+
 def seeker_move(seeker_pos,d,move_dist,direction_cnt,cnt,inout): # d : 술래의 방향, inout : 안에서 밖으로
     x,y = seeker_pos #술래의 현재 좌표
 
@@ -80,6 +83,8 @@ def seeker_move(seeker_pos,d,move_dist,direction_cnt,cnt,inout): # d : 술래의
         direction_cnt = 0  # 방향을 2번 바꿨는지 확인하는 변수
         cnt = 0  # 현재까지 이동 몇 칸 했는지
 
+    arr = [[-1 for _ in range(n)] for _ in range(n)]
+    arr[nx][ny] = d
 
 
     return seeker_pos, d, move_dist, direction_cnt, cnt, inout #술래 좌표, 술래의 이동 방향, 방향을 바꿔야 하는 횟수, 이동할 수 있는 칸 수, 현재 이동 칸, 나선형 방향
@@ -107,6 +112,12 @@ direction_cnt = 0  # 방향을 2번 바꿨는지 확인하는 변수
 cnt = 0  # 현재까지 이동 몇 칸 했는지
 inout = True
 d = 0
+
+
+
+
+
+
 
 scores = 0
 
@@ -144,17 +155,30 @@ for t in range(1, k+1):
 
         hider_x, hider_y, _ = hider_pos[i]
         # 바라보고 있는 방향 3칸에 도망자가 있음
-        if seeker_x <= hider_x <= seeker_x + (dx[d]*2) :
-            if seeker_y <= hider_y <= seeker_y + (dy[d]*2) :
-                #해당 칸에 나무가 있다면 잡지 않는다
-                if (hider_x,hider_y) in tree_pos :
-                    pass
-                else:
-                    hider_pos[i] = [] #좌표에서 사라지게 한다
-                    disappear_cnt += 1
+        # 방향이 왼쪽이나 위쪽이라면 (상우하좌 0123)
+        if d == 3 or d == 0 :
+            if seeker_x + dx[d]*2 <= hider_x <= seeker_x :
+                if seeker_y + dy[d]*2 <= hider_y <= seeker_y :
+                    #해당 칸에 나무가 있다면 잡지 않는다
+                    if (hider_x,hider_y) in tree_pos :
+                        pass
+                    else:
+                        hider_pos[i] = [] #좌표에서 사라지게 한다
+                        disappear_cnt += 1
+    
+        else :
+
+            if seeker_x <= hider_x <= seeker_x + dx[d]*2 :
+                if seeker_y <= hider_y <= seeker_y + dy[d]*2 :
+                    #해당 칸에 나무가 있다면 잡지 않는다
+                    if (hider_x,hider_y) in tree_pos :
+                        pass
+                    else:
+                        hider_pos[i] = [] #좌표에서 사라지게 한다
+                        disappear_cnt += 1
 
     #점수 계산(획득) : t * 사라진 도망자 수
-    scores += t * disappear_cnt
+    scores += (t * disappear_cnt)
 
 
 print(scores)
