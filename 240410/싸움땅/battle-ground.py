@@ -157,7 +157,7 @@ for i in range(n):
     for j in range(n):
         arr[i][j] = [line[j]]
 
-ability = [] #능력치 리스트
+
 
 gun_power = [[] for _ in range(m)] #가지고 있는 총의 공격력 비교 배열
 player_info = [[] for _ in range(m)] #플레이어 정보 리스트
@@ -204,5 +204,5 @@ for t in range(k): #k 라운드 동안 게임 순차적 진행
 
 
 
-    #출력 : 각 플레이어들이 획득한 포인트
-    print(*scores)
+#출력 : 각 플레이어들이 획득한 포인트
+print(*scores)
