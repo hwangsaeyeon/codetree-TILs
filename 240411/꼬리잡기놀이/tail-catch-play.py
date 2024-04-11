@@ -43,7 +43,7 @@ def search(round, direction):
 
     elif direction == 1 : #(n-1, round-1) 부터 (0, round-1)까지 탐색
         for i in range(n,-1,-1):
-            if 0 < arr[i][round-1] > 4 : #최초에 만나는 사람
+            if 0 < arr[i][round-1] < 4 : #최초에 만나는 사람
                 meet_first = arr[i][round-1]
 
                 for j in range(m):
