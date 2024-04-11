@@ -61,7 +61,7 @@ def search(round, direction):
                         if team_pos[j][idx] == (n-1-round, i):
                             return idx+1, j  # 최초에 만나는 사람의 팀이 어느 팀인지 구한다
 
-    elif direction == 3 : #(0, n-1-round) 부터 (n, n-1-round)까지 탐색
+    elif direction == 3 : #(0, n-1-round) 부터 (n-1, n-1-round)까지 탐색
         for i in range(n):
             if 0 < arr[i][n-1-round] < 4 : #최초에 만나는 사람
                 meet_first = arr[i][n-1-round]
@@ -88,7 +88,6 @@ def bfs(head_pos, team_idx):
     q.append((head_x, head_y))
     visited[head_x][head_y] = True
 
-    max_val = 2
     cnt = 0
 
     while q :
@@ -106,12 +105,11 @@ def bfs(head_pos, team_idx):
             if is_inrange(nx,ny):
                 if not visited[nx][ny]:
                     if arr[nx][ny] > 0 :
-                        if arr[nx][ny] <= max_val :
+                        if arr[nx][ny] <= arr[x][y] + 1 :
                             q.append((nx, ny))
                             visited[nx][ny] = True
-                            if arr[nx][ny] == max_val :
-                                max_val += 1
-
+                            
+    
     team_member[team_idx] = cnt
 
 
