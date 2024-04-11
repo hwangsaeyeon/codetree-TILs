@@ -26,11 +26,11 @@ def move(idx):
 
 #2. 라운드에 따라 공을 던짐, 선에 사람이 있으면 --------------------------------------
 def search(round, direction):
-    # 방향 0 : 왼쪽부터 행탐색, 1 : 아래쪽부터 열탐색, 2: 오른쪽부터 행탐색, 3: 위쪽부터 열탐색
+    # 방향 0 : 왼쪽부터 행탐색, 1 : 아래쪽부터 열탐색, 2: 오른쪽부터, 아래서부터 행탐색, 3: 위쪽부터, 오른쪽부터 열탐색
     # round가 1이라면 0번째 행(or열) 2라면 1번째 행(or 열 탐색)
     meet_first = - 1 #최초에 만나는 사람
 
-    if direction == 0 : #(round-1, 0) 부터 (round-1, n-1) 까지 탐색
+    if direction == 0 : #(round, 0) 부터 (round, n-1) 까지 탐색
         for i in range(n):
             if 0 < arr[round][i] < 4 : #최초에 만나는 사람
                 meet_first = arr[round][i]
@@ -41,7 +41,7 @@ def search(round, direction):
                             return idx+1, j # 최초에 만나는 사람의 팀이 어느 팀인지 구한다
 
 
-    elif direction == 1 : #(n-1, round-1) 부터 (0, round-1)까지 탐색
+    elif direction == 1 : #(n-1, round) 부터 (0, round)까지 탐색
         for i in range(n-1,-1,-1):
             if 0 < arr[i][round] < 4 : #최초에 만나는 사람
                 meet_first = arr[i][round]
@@ -51,24 +51,24 @@ def search(round, direction):
                         if team_pos[j][idx] == (i, round):
                             return idx+1, j  # 최초에 만나는 사람의 팀이 어느 팀인지 구한다
 
-    elif direction == 2 : #(round-1, n-1) 부터 (round-1,0) 까지 탐색
+    elif direction == 2 : #(n-1-round, n-1) 부터 (n-1-round,0) 까지 탐색
         for i in range(n-1,-1,-1):
-            if 0 < arr[round][i] < 4 : #최초에 만나는 사람
-                meet_first = arr[round][i]
+            if 0 < arr[n-1-round][i] < 4 : #최초에 만나는 사람
+                meet_first = arr[n-1-round][i]
 
                 for j in range(m):
                     for idx in range(len(team_pos[j])):
-                        if team_pos[j][idx] == (round, i):
+                        if team_pos[j][idx] == (n-1-round, i):
                             return idx+1, j  # 최초에 만나는 사람의 팀이 어느 팀인지 구한다
 
-    elif direction == 3 : #(0, round-1) 부터 (n, round-1)까지 탐색
+    elif direction == 3 : #(0, n-1-round) 부터 (n, n-1-round)까지 탐색
         for i in range(n):
-            if 0 < arr[i][round] < 4 : #최초에 만나는 사람
-                meet_first = arr[i][round]
+            if 0 < arr[i][n-1-round] < 4 : #최초에 만나는 사람
+                meet_first = arr[i][n-1-round]
 
                 for j in range(m):
                     for idx in range(len(team_pos[j])):
-                        if team_pos[j][idx] == (i, round):
+                        if team_pos[j][idx] == (i, n-1-round):
                             return idx+1, j  # 최초에 만나는 사람의 팀이 어느 팀인지 구한다
 
     return meet_first, None #-1라면 아무도 없는 것임, 최초에 만나는 사람의 팀
@@ -153,7 +153,7 @@ for t in range(k) : #턴은 0부터 시작
 
     # 2. 라운드에 따라 공이 던져진다
 
-    round = t % n
+    round = t % n #(0~n-1까지 존재)
     if round == 0 :
         dir = (dir + 1) % 4 #round는 0~n-1까지 존재, 방향은 0~3까지 존재
 
