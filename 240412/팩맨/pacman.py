@@ -133,6 +133,8 @@ for turn in range(t):
 
 
     #3-0. 격자에 몬스터 개수 표현
+    arr = [[0 for _ in range(4)] for _ in range(4)]
+
     for i in range(4):
         for j in range(4):
             for idx in range(m):
@@ -157,6 +159,9 @@ for turn in range(t):
 
     m = len(m_pos)
     e_pos = []
+
+
+
 
 #살아남은 몬스터의 수
 ans = 0
