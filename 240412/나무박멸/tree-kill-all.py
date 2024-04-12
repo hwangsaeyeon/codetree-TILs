@@ -140,31 +140,31 @@ for turn in range(m):
     ans += max_num
 
     #가장 많이 박멸되는 칸에 제초제를 뿌린다
-    if arr[max_i][max_j] > 0 :
-        arr[max_i][max_j] = -(c+1)
 
-        # 4개의 대각선 방향으로 k만큼
-        for dx, dy in ((-1, -1), (-1, 1), (1, -1), (1, 1)):
-            temp_k = k
-            nx, ny = max_i + dx, max_j + dy
-            #if not is_inrange(nx, ny): continue
+    arr[max_i][max_j] = -(c+1)
 
-            while temp_k != 0:
-                # 벽이나 나무 없는 칸을 만나면 그 칸까지만 뿌린다
-                # 제초제 뿌린 칸을 만나면?
-                if not is_inrange(nx, ny): break
+    # 4개의 대각선 방향으로 k만큼
+    for dx, dy in ((-1, -1), (-1, 1), (1, -1), (1, 1)):
+        temp_k = k
+        nx, ny = max_i + dx, max_j + dy
+        #if not is_inrange(nx, ny): continue
 
-                if arr[nx][ny] < -1000 : #벽에는 제초제를 뿌리지 않는다
-                    break
+        while temp_k != 0:
+            # 벽이나 나무 없는 칸을 만나면 그 칸까지만 뿌린다
+            # 제초제 뿌린 칸을 만나면?
+            if not is_inrange(nx, ny): break
 
-                if arr[nx][ny] <= 0: #벽 < 0, 나무없는 칸 == 0
-                    arr[nx][ny] = -(c+1)
-                    break
+            if arr[nx][ny] < -1000 : #벽에는 제초제를 뿌리지 않는다
+                break
 
-                else:
-                    arr[nx][ny] = -(c+1)
-                    nx, ny = nx + dx, ny + dy
-                    temp_k -= 1
+            if arr[nx][ny] <= 0: #벽 < 0, 나무없는 칸 == 0
+                arr[nx][ny] = -(c+1)
+                break
+
+            else:
+                arr[nx][ny] = -(c+1)
+                nx, ny = nx + dx, ny + dy
+                temp_k -= 1
 
     # 제초제가 사라지게 한다
     for i in range(n):
