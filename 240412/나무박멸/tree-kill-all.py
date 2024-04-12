@@ -34,8 +34,6 @@ def grow(arr):
 #2. 번식
 def breed(arr):
     temp_breed = deepcopy(arr)
-
-
     for i in range(n):
         for j in range(n):
             #나무가 있는 칸
@@ -84,8 +82,8 @@ def burn_calculate():
                         #벽이나 나무 없는 칸을 만나면 그 칸까지만 뿌린다
                         #제초제 뿌린 칸을 만나면?
                         if not is_inrange(nx, ny): break
-                        if arr[nx][ny] < 0 :
-                            temp_k = 0
+                        if arr[nx][ny] <= 0 :
+                            break
 
                         else :
                             burn_num[i][j] += arr[nx][ny]
@@ -115,7 +113,7 @@ for i in range(n):
             arr[i][j] = -10000
 
 #m년 동안 박멸 진행
-for i in range(m):
+for turn in range(m):
 
     #1. 성장
     #인접한 네 칸 중 나무가 있는 칸수만큼 성장한다
@@ -131,43 +129,48 @@ for i in range(m):
     #3. 제초제 뿌림
     burn_num = burn_calculate()
 
-    max_i, max_j, max_num = -1, -1, -1
+    max_i, max_j, max_num = 0,0,0
     for i in range(n):
         for j in range(n):
             if burn_num[i][j] > max_num :
                 max_num = burn_num[i][j]
                 max_i, max_j = i, j
 
-    #제초제가 사라지게 한다
-    for i in range(n):
-        for j in range(n):
-            if arr[i][j] < 0 :
-                arr[i][j] +=  1
-
     #박멸되는 나무 수를 계산한다
     ans += max_num
 
     #가장 많이 박멸되는 칸에 제초제를 뿌린다
-    arr[max_i][max_j] = -c
+    if arr[max_i][max_j] > 0 :
+        arr[max_i][max_j] = -(c+1)
 
-    # 4개의 대각선 방향으로 k만큼
-    for dx, dy in ((-1, -1), (-1, 1), (1, -1), (1, 1)):
-        temp_k = k
-        nx, ny = max_i + dx, max_j + dy
-        #if not is_inrange(nx, ny): continue
+        # 4개의 대각선 방향으로 k만큼
+        for dx, dy in ((-1, -1), (-1, 1), (1, -1), (1, 1)):
+            temp_k = k
+            nx, ny = max_i + dx, max_j + dy
+            #if not is_inrange(nx, ny): continue
 
-        while temp_k != 0:
-            # 벽이나 나무 없는 칸을 만나면 그 칸까지만 뿌린다
-            # 제초제 뿌린 칸을 만나면?
-            if not is_inrange(nx, ny): break
-            if arr[nx][ny] < 0:
-                temp_k = 0
-                arr[nx][ny] = -c
+            while temp_k != 0:
+                # 벽이나 나무 없는 칸을 만나면 그 칸까지만 뿌린다
+                # 제초제 뿌린 칸을 만나면?
+                if not is_inrange(nx, ny): break
 
-            else:
-                arr[nx][ny] = -c
-                nx, ny = nx + dx, ny + dy
-                temp_k -= 1
+                if arr[nx][ny] < -1000 : #벽에는 제초제를 뿌리지 않는다
+                    break
+
+                if arr[nx][ny] <= 0: #벽 < 0, 나무없는 칸 == 0
+                    arr[nx][ny] = -(c+1)
+                    break
+
+                else:
+                    arr[nx][ny] = -(c+1)
+                    nx, ny = nx + dx, ny + dy
+                    temp_k -= 1
+
+    # 제초제가 사라지게 한다
+    for i in range(n):
+        for j in range(n):
+            if arr[i][j] < 0:
+                arr[i][j] += 1
 
 
 print(ans)
