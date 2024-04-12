@@ -1,207 +1,168 @@
-import sys
-from collections import deque
-#sys.stdin = open("input.txt","r")
+#############################################################
 
-#1. 몬스터 복제 시도
-def duplicate_monster(idx):
-    '''
-    :param idx: 몬스터의 인덱스
-    :return:
-    '''
+def m_duplicate(idx):
+    r,c,d = m_pos[idx]
+    if (r,c) != (-1,-1):
+        e_pos.append((r,c,d))
 
-    #1-1. 자신과 방향이 같은 몬스터 복제
-    r, c, d = monster_pos[idx]
-    if (r,c,d) != (-1,-1,-1):
-        egg_pos.append((r,c,d))
-
+#############################################################
 def is_inrange(x,y):
     return 0<=x<4 and 0<=y<4
 
-#2. 몬스터 이동
-def monster_move(idx):
-    '''
-    :param idx: 몬스터의 인덱스
-    :return: r,c,d 이동한 뒤의 몬스터 좌표
-    '''
+def m_move(idx):
+    r,c,d = m_pos[idx]
+    if (r,c) == (-1,-1) :
+        return
 
-    x, y, d = monster_pos[idx]
-    if (x,y) == (-1,-1):
-        return x,y,d
-
-    #2-1. 방향대로 1칸 이동
     dx, dy = [-1,-1,0,1,1,1,0,-1],[0,-1,-1,-1,0,1,1,1]
-    nx,ny = x+dx[d], y+dy[d]
 
-    #2-2. 몬스터 시체가 있거나, 팩맨이 있거나, 격자를 벗어나는 경우 방향을 반시계 45'로 돌려 이동가능할 때 이동한다
-    if is_inrange(nx,ny) :
-        if (nx,ny) not in dead_pos :
-            if (nx,ny) != (packman_r, packman_c) :
-                return nx,ny,d
 
-    nd = d #nd에 현재 방향 저장
+    nr, nc = r+dx[d], c+dy[d]
 
+    if is_inrange(nr,nc):
+        if (nr,nc) != (pr,pc) :
+            if (nr,nc) not in d_pos:
+                m_pos[idx] = nr, nc, d
+                return
+
+    #8방향 반시계 방향으로 회전
+    nd = d #현재 방향 복사
     for i in range(8):
-        nd = (nd+1) % 8 #반시계 방향으로 계속 전환한다
-        nx, ny = x+dx[nd], y+dy[nd]
+        nd = (nd+1) % 8 # % len
+        nr, nc = r+dx[nd], c+dy[nd] #현재 위치에서 방향만 트는 것
+        if is_inrange(nr, nc):
+            if (nr, nc) != (pr, pc):
+                if (nr, nc) not in d_pos:
+                    m_pos[idx] = nr, nc, nd
+                    return
 
-        if is_inrange(nx, ny):
-            if (nx, ny) not in dead_pos:
-                if (nx, ny) != (packman_r, packman_c):
-                    return nx, ny, nd
+    return
 
-    #2-3. 8방향을 돌았는데 이동이 불가능하다면 이동하지 않는다 **(방향을 원래방향으로 해야되나?)
-    return x, y, nd
+#############################################################
+def p_move(pr, pc):
 
-#3. 팩맨 이동
-def dfs(x,y,move_cnt,monster_cnt):
-    '''
-    :param r: 팩맨의 행 좌표
-    :param c: 팩맨의 열 좌표
-    :param move_cnt: 현재까지의 이동횟수
-    :return:
-    '''
-    dx, dy = [-1, 0, 1, 0], [0, -1, 0, 1]
-
-    visited[x][y] = True
-
-    if move_cnt == 3 :
-        eat[x][y] = monster_cnt
-        return #현재까지 먹은 몬스터의 개수
+    dx, dy = [-1,0,1,0],[0,-1,0,1] #상좌하우
+    path = []
+    mc = 0
 
 
+    for i in range(4): #첫번째이동
+        fr, fc = pr+dx[i], pc+dy[i]
+        if not is_inrange(fr,fc):continue
 
-    for i in range(4):
-        nx, ny = x + dx[i], y + dy[i]
-        if not is_inrange(nx,ny) : continue
-        if visited[nx][ny] : continue
+        for j in range(4): #두번째이동
+            sr, sc = fr+dx[j], fc+dy[j]
+            if not is_inrange(sr,sc):continue
 
-        crr_cnt = 0 #해당 방향에서 먹을 수 있는 몬스터 수
-        for idx in range(m):
-            mx,my, _ = monster_pos[idx]
-            if (nx,ny) == (mx,my) :
-                crr_cnt += 1
+            for k in range(4): #세번째이동
+                eat_cnt = 0 #방향 전환시 먹을 수 있는 몬스터 수 초기화
+                tr, tc = sr+dx[k], sc+dy[k]
+                if not is_inrange(tr,tc):continue
 
-        path_x[nx][ny] = x #우선 순위 경로 저장
-        path_y[nx][ny] = y
+                # 현재 방향으로 세칸이동할 때 먹을 수 있는 몬스터의 수
+                # 똑같은 자리에 두번 오게 되면 첫번째 먹은 것만 카운트한다.
+                # 첫번째, 세번째만 비교해주면된다. 두번째가 중복된 자리여도, 처음에 있던 자리는 먹지 않은 상태이기 때문
+                if (fr,fc) == (tr,tc):
+                    eat_cnt = (arr[fr][fc] + arr[sr][sc])
+                else:
+                    eat_cnt = (arr[fr][fc] + arr[sr][sc] + arr[tr][tc])
 
-        dfs(nx,ny,move_cnt+1,monster_cnt+crr_cnt)
-
-    #알, 움직이기 전에 함께 있었던 몬스터는 먹지 않는다
+                if eat_cnt > mc :
+                    mc = eat_cnt
+                    path = [(fr,fc),(sr,sc),(tr,tc)]
 
 
 
+    #모든 경로 탐색 완료
+    #팩맨이 먹을 수 없는 경우도 있으려남?
 
-def packman_move(packman_r, packman_c,turn):
-    global m
-    # 3칸 이동하는데 먹는 팩맨이 최대가 되도록 하는 경우
-    dfs(packman_r,packman_c,0,0)
+    #팩맨 이동
+    pr, pc = path[-1][0], path[-1][1]
 
-    max_x, max_y, max_val = -1,-1,0
+    for x,y in path :
+        #최대 경로대로 먹고
+        #시체 처리한다 (m_pos, d_pos, d_time, arr 업데이트 필요)
 
-    for i in range(4):
-        for j in range(4):
-            if eat[i][j] > max_val :
-                max_val = eat[i][j]
-                max_x, max_y = i,j
+        if arr[x][y] > 0 : #경로 내에 몬스터가 있었다면
+            d_pos.append((x,y))
+            d_time.append(turn+2)
+            arr[x][y] = 0
 
-
-    past_x = max_x
-    past_y = max_y
- 
-    # 이동하는 경로에 있는 몬스터를 시체처리한다 (좌표에서 삭제하자)
-    while (past_x, past_y) != (packman_r, packman_c):
-        #하나의 좌표에 몬스터가 두개 있을 수도 있다
-        for idx in range(m):
-            mx,my,_= monster_pos[idx]
-            if (past_x, past_y) == (mx,my):
-                monster_pos[idx] = (-1,-1,-1)  #몬스터를 제거한다
-
-                if (past_x, past_y) not in dead_pos :
-                    dead_pos.append((past_x, past_y))
-                    dead_time.append(turn + 2)
+        #몬스터 좌표 업데이트
+        for i in range(m):
+            r,c,d = m_pos[i]
+            if (r,c) == (x,y):
+                m_pos[i] = -1,-1,-1
 
 
-        tempx = path_x[past_x][past_y]
-        tempy = path_y[past_x][past_y]
-        past_x, past_y = tempx, tempy
-
-
-    #팩맨의 좌표를 업데이트한다
-    packman_r, packman_c = max_x, max_y
-    return packman_r, packman_c
-
-
-#0. 몬스터의 마리수 m, 진행되는 턴의 수 t
-#팩맨의 격자에서의 초기위치 r,c
-m,t = map(int,input().split())
-tr, tc = map(int,input().split())
-packman_r, packman_c = tr-1, tc-1
-
-#몬스터의 위치 r,c와 방향정보 d
-monster_pos = [[] for _ in range(m)]
-
-#몬스터 복제 배열
-egg_pos = []
-
-#시체 시간, 시체 좌표 배열
-#시체는 몬스터 이동에만 고려되므로 다른 배열과 독립적임
-dead_time = []
-dead_pos = []
+    return pr, pc
 
 
 
 
-for i in range(m):
-    r, c, d = map(int,input().split())
-    monster_pos[i] = r-1, c-1,d-1
 
+#############################################################
 
+m,t = map(int, input().split())
 
+r,c = map(int, input().split())
+pr, pc = r-1, c-1
 
-for i in range(t):
-    #1. 몬스터 복제 시도
-    for m_idx in range(m):
-        duplicate_monster(m_idx)
+m_pos = [] #몬스터 위치
+for _ in range(m):
+   r,c,d = map(int,input().split())
+   m_pos.append((r-1,c-1,d-1))
+
+e_pos = [] #알 위치
+d_pos = [] #시체 위치
+d_time = [] #시체 소멸 시간
+
+arr = [[0 for _ in range(4)] for _ in range(4)]
+
+#############################################################
+
+for turn in range(t):
+
+    # 1. 몬스터 복제 시도
+    for i in range(m):
+        m_duplicate(i)
 
     #2. 몬스터 이동
-    for m_idx in range(m):
-        r,c,d = monster_move(m_idx)
-        monster_pos[m_idx] = r,c,d
+    for i in range(m):
+        m_move(i)
+
+
+    #3-0. 격자에 몬스터 개수 표현
+    for i in range(4):
+        for j in range(4):
+            for idx in range(m):
+                r,c,_ = m_pos[idx]
+                if (r,c) == (i,j):
+                    arr[i][j] += 1
+
 
     #3. 팩맨 이동
-    visited = [[False for _ in range(4)] for _ in range(4)]
-    path_x = [[-1 for _ in range(4)] for _ in range(4)]
-    path_y = [[-1 for _ in range(4)] for _ in range(4)]
-    eat = [[0 for _ in range(4)] for _ in range(4)]
-
-    path_x[packman_r][packman_c] = packman_r
-    path_y[packman_r][packman_c] = packman_c
-
-    packman_r, packman_c = packman_move(packman_r, packman_c, i)
-
-    #4. 몬스터 시체 소멸
-    #pop을 하는 순간 좌표가 바뀜에 주의한다
-
-    for idx in range(len(dead_time)):
-        if dead_time[idx] == i : #현재 턴이 시체 소멸 시간을 넘으면
-            dead_pos[idx] = (-1,-1) #시체 좌표에서 제거한다
+    pr, pc = p_move(pr, pc)
 
 
-    #5. 몬스터 복제 완성
-    for m_idx in range(len(egg_pos)):
-        dr, dc, dd = egg_pos[m_idx]
-        monster_pos.append((dr,dc,dd))
+    #4. 시체 소멸
+    for i in range(len(d_time)) :
+        if d_time[i] == turn :
+            d_time[i] = -1
+            d_pos[i] = (-1,-1)
 
-    #5-1. 몬스터 개수 업데이트
-    m = len(monster_pos)
+    #5. 복제 완성
+    for i in range(len(e_pos)):
+        m_pos.append(e_pos[i])
 
-    #5-2. 복제 배열 초기화
-    egg_pos = []
+    m = len(m_pos)
+    e_pos = []
 
-
+#살아남은 몬스터의 수
 ans = 0
 for i in range(m):
-    if monster_pos[i] != (-1,-1,-1):
-        ans+=1
+    r,c,d = m_pos[i]
+    if (r,c) != (-1,-1):
+        ans += 1
 
 print(ans)
