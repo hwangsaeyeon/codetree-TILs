@@ -74,7 +74,24 @@ def p_move(pr, pc):
 
 
     #모든 경로 탐색 완료
-    #팩맨이 먹을 수 없는 경우도 있으려남?
+    #팩맨이 먹을 수 없는 경우도 있으려남? -> 우선순위대로 움직이자
+
+    if len(path) == 0 :
+        for i in range(4):  # 첫번째이동
+            fr, fc = pr + dx[i], pc + dy[i]
+            if not is_inrange(fr, fc): continue
+
+            for j in range(4):  # 두번째이동
+                sr, sc = fr + dx[j], fc + dy[j]
+                if not is_inrange(sr, sc): continue
+
+                for k in range(4):  # 세번째이동
+                    eat_cnt = 0  # 방향 전환시 먹을 수 있는 몬스터 수 초기화
+                    tr, tc = sr + dx[k], sc + dy[k]
+                    if not is_inrange(tr, tc): continue
+
+                    return tr, tc
+
 
     #팩맨 이동
     pr, pc = path[-1][0], path[-1][1]
@@ -133,8 +150,7 @@ for turn in range(t):
 
 
     #3-0. 격자에 몬스터 개수 표현
-    arr = [[0 for _ in range(4)] for _ in range(4)]
-
+    arr = [[0 for _ in range(4)] for _ in range(4)] #초기화
     for i in range(4):
         for j in range(4):
             for idx in range(m):
@@ -159,9 +175,6 @@ for turn in range(t):
 
     m = len(m_pos)
     e_pos = []
-
-
-
 
 #살아남은 몬스터의 수
 ans = 0
