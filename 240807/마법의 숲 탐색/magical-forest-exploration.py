@@ -97,9 +97,17 @@ def jungryung_move(x,y): #(x,y) : 방문하는 골렘 위치
                 if is_inrange(nx, ny):
                     if visited[nx][ny] != 1:
                         if arr[nx][ny] != 0:  # 자기 자신이 아닌 다른 골렘을 찾는다
-                            q.append((nx+dx[i], ny+dy[i])) #정중앙으로 이동
+                            #q.append((nx+dx[i], ny+dy[i])) #정중앙으로 이동
+
+                            #q.append((nx,ny))
                             #visited[nx][ny] = 1
-                            visited[nx+dx[i]][ny+dy[i]] = 1
+
+                            for j in range(4):
+                                nnx, nny = nx + dx[j], ny + dy[j]
+                                if arr[nnx][nny] == arr[nx][ny] :
+                                    q.append((nnx,nny))
+                                    visited[nnx][nny] = 1
+                            #visited[nx+dx[i]][ny+dy[i]] = 1
 
             # 출구를 찾고 이동하는 경우
             else :
@@ -109,22 +117,6 @@ def jungryung_move(x,y): #(x,y) : 방문하는 골렘 위치
                             q.append((nx,ny))
                         visited[nx][ny] = 1
 
-
-
-
-        #출구가 다른 골렘과 인접해있는지 확인한다
-        for i in range(4):
-            nx, ny = cx+dx[i], cy+dy[i]
-            if is_inrange(nx, ny):
-                if visited[nx][ny] != 1:
-                    if arr[cx][cy] > 0 : # 출구를 찾는 경우
-                        if arr[nx][ny] == -1:
-                            adjacent = True
-
-                        elif arr[nx][ny] == arr[cx][cy]: #자기자신(탐색) 이거나 출구
-
-                            q.append((nx,ny))
-                            visited[nx][ny] = 1
 
 
 
