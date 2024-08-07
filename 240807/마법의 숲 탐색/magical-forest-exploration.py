@@ -100,7 +100,7 @@ def jungryung_move(x,y): #(x,y) : 방문하는 골렘 위치
                             #q.append((nx+dx[i], ny+dy[i])) #정중앙으로 이동
 
                             #q.append((nx,ny))
-                            #visited[nx][ny] = 1
+                            visited[nx][ny] = 1
 
                             for j in range(4):
                                 nnx, nny = nx + dx[j], ny + dy[j]
