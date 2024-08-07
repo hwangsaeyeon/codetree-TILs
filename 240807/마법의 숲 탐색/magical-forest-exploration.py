@@ -88,7 +88,7 @@ def jungryung_move(x,y): #(x,y) : 방문하는 골렘 위치
                     if visited[nx][ny] != 1:
                         if arr[nx][ny] != 0:  # 자기 자신이 아닌 다른 골렘을 찾는다
                             q.append((nx+dx[i], ny+dy[i])) #해당 방향으로 한번 더 이동
-                            visited[nx][ny] = 1
+                            #visited[nx][ny] = 1
                             visited[nx+dx[i]][ny+dy[i]] = 1
 
             # 출구를 찾고 이동하는 경우
