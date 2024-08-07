@@ -140,7 +140,7 @@ if __name__ == "__main__" :
         c, d = map(int, input().split()) #d:[0,1,2,3] 북,동,남,서
         golem_x, golem_y, d = golem_move(i, c-1,d)
 
-        if not is_inrange(golem_x, golem_y):
+        if not (is_inrange(golem_x, golem_y) and is_inrange(golem_x+1, golem_y) and is_inrange(golem_x-1, golem_y) and is_inrange(golem_x, golem_y+1) and is_inrange(golem_x, golem_y-1)):
             arr = [[0 for _ in range(C)] for _ in range(R)] #초기화
         else :
             row = jungryung_move(golem_x, golem_y)
