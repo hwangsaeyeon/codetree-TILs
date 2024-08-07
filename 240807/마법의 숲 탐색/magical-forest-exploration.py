@@ -10,14 +10,22 @@ def check(direction,x,y):
                 return True
     if direction == 'west': #서쪽
         if x+2 <= R-1 and y-2 >= 0 :
-            if arr[x][y-2] == 0 and arr[x-1][y-1] == 0 and arr[x+1][y-1] == 0 :
-                if arr[x+1][y-2] == 0 and arr[x+2][y-1] == 0: #추가
+            if x>0 :
+                if arr[x][y-2] == 0 and arr[x-1][y-1] == 0 and arr[x+1][y-1] == 0 :
+                    if arr[x+1][y-2] == 0 and arr[x+2][y-1] == 0: #추가
+                        return True
+            else :
+                if arr[x + 1][y - 2] == 0 and arr[x + 2][y - 1] == 0:  # 추가
                     return True
 
     if direction == 'east': #동쪽
         if x+2 <= R-1 and y+2 <= C-1 :
-            if arr[x][y+2] == 0 and arr[x-1][y+1] == 0 and arr[x+1][y+1] == 0 :
-                if arr[x+1][y+2] == 0 and arr[x+2][y+1] == 0 :
+            if x > 0 :
+                if arr[x][y+2] == 0 and arr[x-1][y+1] == 0 and arr[x+1][y+1] == 0 :
+                    if arr[x+1][y+2] == 0 and arr[x+2][y+1] == 0 :
+                        return True
+            else :
+                if arr[x + 1][y + 2] == 0 and arr[x + 2][y + 1] == 0:
                     return True
 
     return False
@@ -38,10 +46,12 @@ def update_arr(i,x,y,d):
 
 #----main 함수----#
 def golem_move(i,c,d):
-    x,y = -1, c
+    x,y = -2, c
+
+    if arr[x+2][y] == 0:
+        x, y = -1, c
 
     while ( x+1 != R-1 ):
-
         if check('south', x, y):
             x,y = x+1, y
             continue
@@ -87,7 +97,7 @@ def jungryung_move(x,y): #(x,y) : 방문하는 골렘 위치
                 if is_inrange(nx, ny):
                     if visited[nx][ny] != 1:
                         if arr[nx][ny] != 0:  # 자기 자신이 아닌 다른 골렘을 찾는다
-                            q.append((nx+dx[i], ny+dy[i])) #해당 방향으로 한번 더 이동
+                            q.append((nx+dx[i], ny+dy[i])) #정중앙으로 이동
                             #visited[nx][ny] = 1
                             visited[nx+dx[i]][ny+dy[i]] = 1
 
