@@ -64,12 +64,7 @@ def explore(arr):
 def is_inrange(x,y):
     return 0<=x<5 and 0<=y<5
 def recur(x,y,val,xy,visited,new):
-    cnt = 0
-    for i in range(5):
-        cnt += sum(visited[i])
 
-    if cnt == 25:
-        return val, xy
 
     dx, dy = [-1,1,0,0], [0,0,-1,1]
     for d in range(4):
