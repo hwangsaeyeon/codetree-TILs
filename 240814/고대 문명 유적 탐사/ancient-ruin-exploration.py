@@ -1,7 +1,6 @@
 from copy import deepcopy
 
 def rotation(i, j, arr): #중심 좌표(i,j)
-
     new = [[0 for _ in range(5)] for _ in range(5)]
     rotated = deepcopy(arr)
 
@@ -21,7 +20,7 @@ def explore(arr):
     ans= 0
     finxy = []
     fin = []
-
+    #회전 각도가 가장 우선
     for col in range(1,4): #중심점
         for row in range(1,4):
             new = rotation(row, col, arr)
@@ -32,27 +31,46 @@ def explore(arr):
                 finxy = xys
                 fin = new
 
-            new2 = rotation(row, col, new)
+    #180도
+    for col in range(1,4):
+        for row in range(1,4):
+            new = rotation(row, col, arr)
+            new = rotation(row, col, new)
             val, xys = get_ruins(new)
 
             if val > ans :
                 ans = val
                 finxy = xys
-                fin = new2
+                fin = new
 
-            new3 = rotation(row, col, new2)
+    #270도 회전
+    for col in range(1, 4):
+        for row in range(1, 4):
+            new = rotation(row, col, arr)
+            new = rotation(row, col, new)
+            new = rotation(row, col, new)
             val, xys = get_ruins(new)
 
             if val > ans :
                 ans = val
                 finxy = xys
-                fin = new3
+                fin = new
+
+
+
 
     return ans, finxy, fin
 
 def is_inrange(x,y):
     return 0<=x<5 and 0<=y<5
 def recur(x,y,val,xy,visited,new):
+    cnt = 0
+    for i in range(5):
+        cnt += sum(visited[i])
+
+    if cnt == 25:
+        return val, xy
+
     dx, dy = [-1,1,0,0], [0,0,-1,1]
     for d in range(4):
         nx, ny = x+dx[d], y+dy[d]
@@ -84,8 +102,6 @@ def get_ruins(new):
 #print(explore(arr))
 
 def replace(ans, finxy, arr, hubo):
-
-
     replace_total = 0
 
     while ans >= 3: #3개 연속일때 까지
