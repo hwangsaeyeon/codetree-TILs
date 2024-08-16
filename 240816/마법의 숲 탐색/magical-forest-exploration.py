@@ -113,9 +113,9 @@ def jungryung_move(pos,arr):
             nx, ny = x+dx[d], y+dy[d]
             if inrange(nx, ny) and visited[nx][ny] == 0 and arr[nx][ny] != 0:
                 if arr[x][y] % 2 == 0 : #출구라면 작은 값을 찾는다
-                    if arr[nx][ny] < arr[x][y]:
-                        q.append((nx, ny))
-                        visited[nx][ny] = 1
+                    #if arr[nx][ny] < arr[x][y]:
+                    q.append((nx, ny))
+                    visited[nx][ny] = 1
                 else: #출구가 아니라면 같거나 큰 값을 찾는다
                     if arr[nx][ny] >= arr[x][y]:
                         q.append((nx, ny))
