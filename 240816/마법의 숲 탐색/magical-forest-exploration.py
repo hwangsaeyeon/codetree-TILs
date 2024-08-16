@@ -109,13 +109,8 @@ def jungryung_move(pos,arr):
 
     while q:
         x,y = q.popleft()
-
-
-
-
         for d in range(4):
             nx, ny = x+dx[d], y+dy[d]
-
             if is_inrange(nx, ny) and visited[nx][ny] == 0 and arr[nx][ny] != 0:
                 if arr[x][y] % 2 == 0 : #출구라면 작은 값을 찾는다
                     if arr[nx][ny] < arr[x][y]:
@@ -127,11 +122,8 @@ def jungryung_move(pos,arr):
                         visited[nx][ny] = 1
 
 
-    #골렘이 가장 남쪽으로 이동한다
-
-
     #정령의 가장 최남단 위치 찾기
-    for row in range(R+2, -1, -1):
+    for row in range(R+2, -1, 2):
         if sum(visited[row]) >= 1:
             return row-2
 
