@@ -123,7 +123,7 @@ def jungryung_move(pos,arr):
 
 
     #정령의 가장 최남단 위치 찾기
-    for row in range(R+2, -1, 2):
+    for row in range(R+2, 2, -1):
         if sum(visited[row]) >= 1:
             return row-2
 
