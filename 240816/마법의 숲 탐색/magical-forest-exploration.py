@@ -117,7 +117,7 @@ def jungryung_move(pos,arr):
                     q.append((nx, ny))
                     visited[nx][ny] = 1
                 else: #출구가 아니라면 같거나 큰 값을 찾는다
-                    if arr[nx][ny] >= arr[x][y]:
+                    if arr[nx][ny] == arr[x][y] or arr[nx][ny] == arr[x][y]+1:
                         q.append((nx, ny))
                         visited[nx][ny] = 1
 
