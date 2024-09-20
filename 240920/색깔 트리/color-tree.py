@@ -80,9 +80,7 @@ for _ in range(Q):
 
     elif orders[0] == 200:
         m,c = orders[1:]
-        visited = dict()
-        for key in info.keys():
-            visited[key] = False
+        visited = [False for _ in range(100000)]
         color_change(visited,m,c)
 
 
@@ -98,7 +96,7 @@ for _ in range(Q):
         #    visited[key] = False
 
         for i in tree.keys():
-            visited = dict()
+            #visited = dict()
             #print('n번 노드 탐색:',i)
             visited = [False for _ in range(100000)]
             values = cal_value(visited, i, 0, [])
