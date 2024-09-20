@@ -94,13 +94,13 @@ for _ in range(Q):
     elif orders[0] == 400:
         value_sum = 0
 
-
+        #for key in info.keys():
+        #    visited[key] = False
 
         for i in tree.keys():
             visited = dict()
-            for key in info.keys():
-                visited[key] = False
             #print('n번 노드 탐색:',i)
+            visited = [False for _ in range(100000)]
             values = cal_value(visited, i, 0, [])
             #print(i,'번 노드 value:',values)
             value_sum += (values) ** 2
